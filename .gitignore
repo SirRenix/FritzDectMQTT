@@ -3,6 +3,7 @@ mysecrets.h
 secrets.yaml
 
 *.log.*
+*.bak*
 
 
 # Byte-compiled / optimized / DLL files
