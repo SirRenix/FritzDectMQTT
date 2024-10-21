@@ -1,88 +1,102 @@
 # FritzDectMQTT
-Das Script liest per Http-API aus einer Fritzbox die Daten der dort angeschlossenen DECT-Steckdosen aus.
-**Geplant** ist auch das Auslesen weiterer Geräte (Heizungsregler, Rollläden)
 
-Diese Daten werden dann an einen **MQTT Broker** versendet. Dieser muss eingerichtet und per Netzwerk erreichbar sein.
-
-Das Script ist primär für die Verwendung auf einem Raspberian Microrechner (RasPi) konzipiert. Es kann natürlich auf jedem 
-anderen Linuxrechner mit installiertem Python 3.10 oder höher verwendet werden.
-
-Die Konfigurationsscripte sind für den Standard-RasPi-User `pi` eingerichtet, ein abweichender Username ist dort entsprechen zu 
-korrigieren. 
+[![en](https://img.shields.io/badge/lang-en-red.svg)](README.md) | [[![de](https://img.shields.io/badge/lang-de-green.svg)](README.de.md)
 
 ---
-## Einrichtungsschritte
-  * Das File `_secrets.yaml` mit den passenden Fritzbox-Zugangsdaten versehen.
-  * Das File `_secrets.yaml` muss dann nach `secrets.yaml` umbenannt werden.
-  * Einrichten eines [Virtuellen Environment für Python](#Python-Virtuelles-Environment-(venv)-einrichten)
-  * Einrichten der [Logfile-Rotation](#Logfile-Rotation)
-  * Einrichten eines [Systemdienstes zum automatischen Starten](#Service-(systemctl)) 
 
-### Python Virtuelles Environment (venv) einrichten
-Ein Virtual Environment bietet die Möglichkeit, mehrere parallele Instanzen des Python-Interpreters aufzusetzen, wobei jede 
-mit unterschiedlichen Packages und Konfigurationen ausgestattet werden kann. Jede virtuelle Umgebung enthält eine eigenständige Kopie des Python-Interpreters, einschließlich Kopien der unterstützenden Dienstprogramme.
+This script reads data from DECT sockets connected to a Fritzbox via the HTTP API fritzconnection and sends it to an **MQTT Broker**. The project is primarily designed for use on a Raspberry Pi but can be run on any Linux machine with Python 3.10 or higher. Also it is possible to run the script in an Docker Container.
 
-    # Python virtual environent installieren
-    sudo apt-get install python3-venv
+---
 
-    # gehe in das Projektverzeichnis
-    cd ~/FritzDectMQTT
+## Features
 
-    # Virtuelles environment initialisieren
-    python -m venv ~/FritzDectMQTT/venv
+- **MQTT Protocol**: Sends data from connected devices.
+- **Structured Code**: Improved code organization for better maintainability.
+- **Docker Test Environment**: Tested in a Docker container.
+- **Threading**: Parallel processing support.
+- **FritzHomeAutomation**: Basic code for controlling sockets integrated.
+- **Publisher/Subscriber**: Methods for publishing and receiving MQTT messages.
+- **Device Status**: Integrated `GetDeviceStats` for socket information.
+- **Status**: The project is still in the testing phase.
 
-    # Einbinden des venv in die aktuelle Sitzungsumgebung
-    source ~/FritzDectMQTT/venv/bin/activate
+---
 
-    # Installieren der für das Projekt notwendigen Python Module
-    pip install -r requirements.txt
+## Planned Changes
 
-Der Pfad in der `fritzdectmqtt.service` - Datei muss entsprechend dem Usernamen angepasst werden.
+- English README and multi-language support.
+- Documentation of Docker functionality with an MQTT server.
+- Expand code documentation.
+- Improve error handling to cover more cases.
+- Docker install docu (QNAP NAS)
+
+---
+
+## Setup Instructions
+
+1. Fill in **_secrets.yaml** with Fritzbox credentials and rename to `secrets.yaml`.
+2. [Set up a Python virtual environment](#python-virtual-environment-setup).
+3. [Configure log rotation](#log-rotation).
+4. [Set up as a systemd service for auto-start](#systemd-service-setup).
+
+---
+
+### Python Virtual Environment Setup
+
+To create an isolated Python environment for the project:
+
+```bash
+#python virtual environment install
+sudo apt-get install python3-venv
+
+#move to project directory
+cd ~/FritzDectMQTT
+
+# virtual environment init
+python -m venv ~/FritzDectMQTT/venv
+
+# activate env
+source ~/FritzDectMQTT/venv/bin/activate
+
+# install dependencies
+pip install -r requirements.txt
+
+# modify service
+The path in `fritzdectmqtt.service` - service file must be changed or modified with your username of the system.
 
 ---
 
 ### Logfile-Rotation
-Um zu vermeiden, dass das Filesystem des Rechners durch die Logfiles voll läuft, wird die Logrotate Funktionalität des 
-Linux-OS verwendet.
+to avoid the computer system being full of log files or large files.
+It is recommended to use logrotate under linux.
 
-Falls ``logrotate`` noch nicht installiert ist, installiere es:
+install:
 
     sudo apt install logrotate
 
-Kopiere das File ``fritzdectmqtt.logrotate``:
+copy file ``fritzdectmqtt.logrotate``:
 
     sudo cp cli/fritzdectmqtt.logrotate /etc/logrotate.d/fritzdectmqtt 
 
 ---
 
 ### Service (systemctl)
-Das Script läuft permanent, die Abrufen-Abstände der Fritzbox-Werte werden über **looptime** gesteuert (``configdata.cfg``)
+run script as a background service:
 
-###### -- Umkopieren --
+# System service copy
+sudo cp cli/fritzdectmqtt.service /etc/systemd/system
 
-    sudo cp cli/fritzdectmqtt.service /etc/systemd/system
+# activate
+sudo systemctl enable fritzdectmqtt.service
 
-###### -- Aktivieren --
+# start
+sudo systemctl start fritzdectmqtt.service
 
-    sudo systemctl enable fritzdectmqtt.service
+# check status 
+sudo systemctl status fritzdectmqtt.service
 
-###### -- Starten --
-
-    sudo systemctl start fritzdectmqtt.service
-
-###### -- Kontrolle -- 
-
-    sudo systemctl status fritzdectmqtt.service
-
-###### -- Stoppen --
-
-    sudo systemctl stop fritzdectmqtt.service
+# stop
+sudo systemctl stop fritzdectmqtt.service
 
 ---
 
-*Das Projekt ist in einer frühen Phase, die Fehlererkennung ist noch in einer relativ rudimentären Qualität.*
-
-
-
-
-
+*The project is in an early phase, the error detection is still of a basic quality.*
