@@ -1,3 +1,17 @@
+*Diese Branch dient nur als Backup und wird nicht mehr weiter entwickelt. Moonraker-fritz Branch ist aktueller stand.
+Hier sind die ersten refactorings festgehalten.*
+
+Nicht UpToDate grobe Übersicht:
+- MQTT Protokoll Anhebung
+- strukturierter aufgebaut
+- bessere Wartbarkeit
+- Testumfeld in einem Docker Container getestet
+- Threading Implementierung
+- FritzHomeAutomation integriert mit basis code fürs schalten einer Steckdose
+- Publisher und Subscriber Methoden eingebaut
+- Für Steckdosen Informationen Getdevicestats integriert
+  
+
 # FritzDectMQTT
 Das Script liest per Http-API aus einer Fritzbox die Daten der dort angeschlossenen DECT-Steckdosen aus.
 **Geplant** ist auch das Auslesen weiterer Geräte (Heizungsregler, Rollläden)
