@@ -1,2 +1,0 @@
-# Füge hier deinen neuen Cronjob hinzu
-* * * * * root python /usr/src/app/shared/dein_script.py >> /var/log/cron.log 2>&1

@@ -1,17 +1,42 @@
 # Basis-Image verwenden
-FROM python:3.9-slim
+FROM python:3.10-slim
 
 # Erstelle ein Verzeichnis für die Python-Skripte
-RUN mkdir /scripts
-WORKDIR /scripts
+RUN mkdir -p /app /app/logs /etc/mosquitto /mosquitto/config
+
+WORKDIR /app
 
 # Systemabhängigkeiten installieren
 RUN apt-get update && apt-get install -y \
+	git \
     openssh-server \
-    cron \
     vim \
     nano \
+    logrotate \
+    supervisor \
+	mosquitto \
     && rm -rf /var/lib/apt/lists/*
+
+# clone GitHub-Repository
+RUN git clone --branch moonraker-fritz https://github.com/SirRenix/FritzDectMQTT.git /app/FritzDectMQTT
+
+#set work directory for FritzDectMQTT
+WORKDIR /app/FritzDectMQTT
+
+# Installiere die Python-Abhängigkeiten für FritzDectMQTT aus der geklonten requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# copy Logrotate-config
+COPY /docker/fritzdectmqttdocker.logrotate /etc/logrotate.d/fritzdectmqtt
+
+# Mosquitto Konfiguration
+COPY /docker/mosquitto.conf /mosquitto/config/mosquitto.conf
+
+# Kopiere Supervisor-Konfiguration
+COPY /docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Erstelle einen Mosquitto-Benutzer mit Passwort
+RUN mosquitto_passwd -b /mosquitto/config/mosquitto.passwd yourusername yourpassword
 
 # SSH Konfiguration
 RUN mkdir /var/run/sshd
@@ -19,13 +44,8 @@ RUN echo 'root:root' | chpasswd
 RUN sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
 
-# Beispiel-Cronjob hinzufügen, der jede Minute ausgeführt wird (initial leer)
-COPY my_crontab /etc/cron.d/my_crontab
-RUN chmod 0644 /etc/cron.d/my_crontab
-RUN crontab /etc/cron.d/my_crontab
-
 # Exponierte Ports
-EXPOSE 22
+EXPOSE 22 1883
 
-# SSH und Cron Dienst starten
-CMD service ssh start && cron -f
+# Starten von Supervisor (mit SSH, logrotate und FritzDectMQTT)
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
