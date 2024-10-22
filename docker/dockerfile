@@ -1,0 +1,31 @@
+# Basis-Image verwenden
+FROM python:3.9-slim
+
+# Erstelle ein Verzeichnis für die Python-Skripte
+RUN mkdir /scripts
+WORKDIR /scripts
+
+# Systemabhängigkeiten installieren
+RUN apt-get update && apt-get install -y \
+    openssh-server \
+    cron \
+    vim \
+    nano \
+    && rm -rf /var/lib/apt/lists/*
+
+# SSH Konfiguration
+RUN mkdir /var/run/sshd
+RUN echo 'root:root' | chpasswd
+RUN sed -ri 's/^#?PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
+
+# Beispiel-Cronjob hinzufügen, der jede Minute ausgeführt wird (initial leer)
+COPY my_crontab /etc/cron.d/my_crontab
+RUN chmod 0644 /etc/cron.d/my_crontab
+RUN crontab /etc/cron.d/my_crontab
+
+# Exponierte Ports
+EXPOSE 22
+
+# SSH und Cron Dienst starten
+CMD service ssh start && cron -f
