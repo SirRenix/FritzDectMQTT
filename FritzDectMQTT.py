@@ -140,6 +140,13 @@ def abfrage_fb(mqtt_con):
 
         except FritzServiceError as fbexp:
             logger.error(f"FritzServiceError: {fbexp}")
+            logger.info("Reconnecting to FritzBox in 60sec...")
+            time.sleep(60)
+            
+        except Exception as e:
+            logger.error(f"Error querying FritzBox: {e}")
+            logger.info("Reconnecting to FritzBox in 60sec...")
+            time.sleep(60)
 
         looptime = configuration.get("QUERY", {}).get("looptime", 10) 
         time.sleep(looptime)
@@ -215,7 +222,12 @@ def listen_mqtt_forever(mqtt_client):
             mqtt_client.MQTTClient.loop_forever()
         except Exception as e:
             logger.error(f"Error in MQTT loop: {e}")
-            time.sleep(5)
+            try:
+                mqtt_client.MQTTClient.reconnect()
+                logger.info("Reconnected to MQTT broker.")
+            except Exception as e:
+                logger.error(f"Error reconnecting to MQTT broker: {e}")
+                time.sleep(5)
 
 # ---------------
 def main():
