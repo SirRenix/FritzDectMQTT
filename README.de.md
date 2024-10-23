@@ -2,6 +2,10 @@
 
 Dieses Script liest per HTTP-API "fritzconnection" die Daten von an einer Fritzbox angeschlossenen DECT-Steckdosen aus und sendet sie an einen **MQTT Broker**. Das Projekt ist primär für den Einsatz auf einem Raspberry Pi konzipiert, kann aber auf jedem Linux-Rechner mit Python 3.10+ verwendet werden oder Docker Container.
 
+## Changelog
+
+Hier ist die changelog [here](CHANGELOG.md).
+
 ---
 
 ## Funktionsübersicht Stand 10.2024

@@ -2,6 +2,10 @@
 
 [![en](https://img.shields.io/badge/lang-en-red.svg)](README.md) | [![de](https://img.shields.io/badge/lang-de-green.svg)](README.de.md)
 
+## Changelog
+
+You can find the full changelog of this project [here](CHANGELOG.md).
+
 ---
 
 This script reads data from DECT sockets connected to a Fritzbox via the HTTP API fritzconnection and sends it to an **MQTT Broker**. The project is primarily designed for use on a Raspberry Pi but can be run on any Linux machine with Python 3.10 or higher. Also it is possible to run the script in an Docker Container.
