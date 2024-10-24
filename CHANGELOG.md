@@ -1,5 +1,18 @@
 # Changelog
 
+## Version 1.1.02a - 2024-10-24
+### Fixes
+- **Requirements**:
+update requirements to new versions.
+- PyYAML~=6.0.2
+- paho-mqtt~=2.1.0
+- fritzconnection~=1.14.0
+
+- **Dockerfile**:
+- some changes in dockerfile for test - not ready to use. 
+- python version from 3.9slim to 3.13slim
+- add logrotate for FritzDectMQTT
+- add supervisor SSH, FritzDectMQTT, logrotate
 
 ## Version 1.1.01 - 2024-10-24
 ### Fixes
