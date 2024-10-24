@@ -1,5 +1,11 @@
 # Changelog
 
+
+## Version 1.1.01 - 2024-10-24
+### Fixes
+- **MQTT Reconnection Fix**: Added a reconnection check for fritzconnection to handle scenarios where the MQTT client is disconnected. The script now waits for 5 seconds before retrying the connection if the client is not connected, ensuring continuous attempts until a successful reconnection is made.
+Downtime check ~20min.
+
 ## Version 1.1 - 2024-10-23
 ### Fixes
 - **Improved**: Improved automatic reconnection to the MQTT broker after a connection loss. Exception handling has also been implemented. This fix fixes problems where the script no longer restores a connection. Seconds of network downtime did not affect the script.

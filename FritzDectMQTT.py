@@ -124,6 +124,11 @@ def abfrage_fb(mqtt_con):
     """Main function to query FritzBox and send data via MQTT."""
     while True:
         try:
+            if not mqtt_con.MQTTClient.is_connected():  
+                logger.warning("MQTT not connected. Reconnecting...")
+                time.sleep(5) # wait 5 seconds and try again
+                continue
+
             fb_config = secrets["Fritzbox"][configuration["QUERY"]["FB"]]
             fc = connect_to_fritzbox(fb_config)
 
