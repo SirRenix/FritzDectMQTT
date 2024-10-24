@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # clone GitHub-Repository
-RUN git clone --branch moonraker-fritz -- single-branch https://github.com/SirRenix/FritzDectMQTT.git /app/FritzDectMQTT
+RUN git clone --branch moonraker-fritz --single-branch https://github.com/SirRenix/FritzDectMQTT.git /app/FritzDectMQTT
 
 #set work directory for FritzDectMQTT
 WORKDIR /app/FritzDectMQTT
